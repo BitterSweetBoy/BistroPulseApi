@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Module.Application.Interfaces
+namespace Module.Shared.Interfaces
 {
-    internal class IRestaurantRepository
+    public interface ISessionValidator
     {
+        Task<bool> ValidateSessionAsync();
     }
 }
