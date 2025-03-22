@@ -1,20 +1,27 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 8080
+EXPOSE 5020
+EXPOSE 5021
 
+# Fase de build y publish
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["BistroPulseApi/BistroPulseApi.csproj", "BistroPulseApi/"]
-RUN dotnet restore "BistroPulseApi/BistroPulseApi.csproj"
+
 COPY . .
+
+# Restauramos las dependencias
+RUN dotnet restore "BistroPulseApi/BistroPulseApi.csproj" 
+
+# Cambiamos al directorio del proyecto principal
 WORKDIR "/src/BistroPulseApi"
-RUN dotnet build "BistroPulseApi.csproj" -c Release -o /app/build
 
-FROM build AS publish
-RUN dotnet publish "BistroPulseApi.csproj" -c Release -o /app/publish
 
+# Publicamos con log detallado
+RUN dotnet publish "BistroPulseApi.csproj" -c Release -o /app/publish 
+
+# Fase final de la imagen
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
-
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "BistroPulseApi.dll"]

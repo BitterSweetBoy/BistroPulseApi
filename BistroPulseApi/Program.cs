@@ -10,12 +10,10 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Cargar variables de entorno
-builder.Configuration
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-    .AddEnvironmentVariables(); //
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5020); 
+});
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("BistroPulseDB");
