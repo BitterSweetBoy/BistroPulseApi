@@ -10,6 +10,11 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5020); 
+});
+
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("BistroPulseDB");
 builder.Services.AddCustomIdentity(connectionString);
