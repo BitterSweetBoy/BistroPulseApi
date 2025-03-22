@@ -10,10 +10,10 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(5020); 
-});
+//builder.WebHost.ConfigureKestrel(options =>
+//{
+//    options.ListenAnyIP(5020); 
+//});
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("BistroPulseDB");
@@ -33,6 +33,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseCors(options =>
+                options.WithOrigins("http://localhost:4200")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+            );
 
 Console.WriteLine(app.Environment.EnvironmentName);
 // Configure the HTTP request pipeline.
