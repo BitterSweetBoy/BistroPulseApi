@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 5020
-EXPOSE 5021
+EXPOSE 5010
+EXPOSE 5723
 
 # Fase de build y publish
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
