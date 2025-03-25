@@ -62,9 +62,12 @@ namespace Module.Application.Services
                     return false;
                 }
 
-                // Opción para actualizar la última actividad en la sesión
-                session.LastActivity = DateTime.UtcNow;
-                await _repository.UpdateSessionAsync(session);
+                // Solo actualizar la última actividad si es necesario (por ejemplo, si ha pasado mucho tiempo desde la última actualización)
+                if (session.LastActivity.AddMinutes(5) <= DateTime.UtcNow)
+                {
+                    session.LastActivity = DateTime.UtcNow;
+                    await _repository.UpdateSessionAsync(session);
+                }
 
                 return true;
             }

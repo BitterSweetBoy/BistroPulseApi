@@ -34,7 +34,7 @@ namespace Module.Infrastructure.Repositories
                     TicketData = ticketBase64,
                     CreatedAt = DateTime.UtcNow,
                     LastActivity = DateTime.UtcNow,
-                    ExpiresAt = DateTime.UtcNow.AddMinutes(3),
+                    ExpiresAt = DateTime.UtcNow.AddMinutes(30),
                     IpAddress = ipAddress,
                     UserAgent = userAgent
                 };
@@ -65,7 +65,7 @@ namespace Module.Infrastructure.Repositories
 
                 _logger.LogInformation("Renovando sesión {SessionKey} para el usuario {UserId}", key, session.UserId);
                 session.LastActivity = DateTime.UtcNow;
-                session.ExpiresAt = DateTime.UtcNow.AddMinutes(10);
+                session.ExpiresAt = DateTime.UtcNow.AddMinutes(45);
 
                 var ticketBytes = TicketSerializer.Default.Serialize(ticket);
                 session.TicketData = Convert.ToBase64String(ticketBytes);
@@ -236,7 +236,10 @@ namespace Module.Infrastructure.Repositories
         {
             try
             {
-                var session = await _context.SessionTickets.FirstOrDefaultAsync(s => s.SessionKey == key);
+                var session = await _context.SessionTickets
+                    .Where(s => s.SessionKey == key && s.ExpiresAt > DateTime.UtcNow && !s.IsSessionExpired && !s.RevokedByAdmin)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
                 if (session == null)
                     _logger.LogWarning("Intento de recuperar sesión fallido. La sesión {SessionKey} no existe.", key);
 

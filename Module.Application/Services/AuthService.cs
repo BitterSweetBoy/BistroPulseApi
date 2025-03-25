@@ -97,7 +97,6 @@ namespace Module.Application.Services
                 var authProperties = new AuthenticationProperties
                 {
                     IsPersistent = true,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10)
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, "SessionId");

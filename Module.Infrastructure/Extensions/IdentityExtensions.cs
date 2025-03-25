@@ -40,8 +40,9 @@ namespace Module.Infrastructure.Extensions
             // Configuración de la cookie de sesión
             options.Cookie.Name = "SessionId";
             options.Cookie.HttpOnly = true;
-            options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Requiere HTTPS
-            options.Cookie.SameSite = SameSiteMode.Strict; // Evita el uso en contextos de terceros
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Expira en 30 minutos
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Requiere HTTPS (Production)
+            options.Cookie.SameSite = SameSiteMode.None; // Aqui se configura el uso en contextos de terceros
             options.LoginPath = "/auth/login";
             options.LogoutPath = "/auth/logout";
             options.SlidingExpiration = true; // Renueva la expiración si hay actividad
@@ -62,9 +63,10 @@ namespace Module.Infrastructure.Extensions
         private static async Task RenewSessionAsync(CookieValidatePrincipalContext context)
         {
             var httpContext = context.HttpContext;
+            Console.WriteLine("Renovando sesión para el usuario:");
 
-            // Extender la expiración de la cookie en 30 minutos
-            context.Properties.ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30);
+            // Extender la expiración de la cookie en 45 minutos
+            context.Properties.ExpiresUtc = DateTime.UtcNow.AddMinutes(45);
             await httpContext.SignInAsync(context.Principal, context.Properties);
 
             // Obtener el SessionKey del claim del usuario autenticado
