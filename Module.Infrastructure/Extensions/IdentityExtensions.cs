@@ -22,6 +22,28 @@ namespace Module.Infrastructure.Extensions
                 .AddEntityFrameworkStores<WriteDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
+
+            // Configurar la cookie externa
+            services.ConfigureExternalCookie(options =>
+            {
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
+
+
+            //Configurar cookie de TwoFactor
+            services.Configure<CookieAuthenticationOptions>(IdentityConstants.TwoFactorUserIdScheme, options =>
+            {
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
+
+
             // Configurar la autenticación con un solo esquema "SessionId"
             services.AddAuthentication(options =>
             {
