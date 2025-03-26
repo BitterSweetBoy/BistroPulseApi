@@ -35,7 +35,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 app.UseCors(options =>
-                options.WithOrigins("http://localhost:4200", "https://localhost:4200")
+                options.WithOrigins("http://localhost:4200", "https://bistro-pulse.vercel.app")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()
