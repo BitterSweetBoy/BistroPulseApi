@@ -8,6 +8,7 @@ public class User : IdentityUser
     public Gender Gender { get; set; }
     public string ImageUrl { get; set; } = string.Empty;
     public virtual ICollection<SessionTicket> SessionTickets { get; set; } = new List<SessionTicket>();
+    public ICollection<RestaurantAdmin> RestaurantAdmins { get; set; }
 }
 
 public enum Gender

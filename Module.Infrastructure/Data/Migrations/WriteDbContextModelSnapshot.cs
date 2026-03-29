@@ -303,6 +303,25 @@ namespace Module.Infrastructure.Data.Migrations
                     b.ToTable("Restaurants", "Restaurant");
                 });
 
+            modelBuilder.Entity("Module.Core.Entities.RestaurantAdmin", b =>
+                {
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DNI")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("RestaurantId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Admins", "Restaurant");
+                });
+
             modelBuilder.Entity("Module.Core.Entities.RiderZone", b =>
                 {
                     b.Property<string>("RiderId")
@@ -560,22 +579,6 @@ namespace Module.Infrastructure.Data.Migrations
                     b.ToTable("Customers", "Users");
                 });
 
-            modelBuilder.Entity("Module.Core.Entities.RestaurantAdmin", b =>
-                {
-                    b.HasBaseType("Module.Core.Entities.User");
-
-                    b.Property<string>("DNI")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("RestaurantId")
-                        .HasColumnType("integer");
-
-                    b.HasIndex("RestaurantId");
-
-                    b.ToTable("Admins", "Restaurant");
-                });
-
             modelBuilder.Entity("Module.Core.Entities.Rider", b =>
                 {
                     b.HasBaseType("Module.Core.Entities.User");
@@ -723,6 +726,25 @@ namespace Module.Infrastructure.Data.Migrations
                     b.Navigation("Zone");
                 });
 
+            modelBuilder.Entity("Module.Core.Entities.RestaurantAdmin", b =>
+                {
+                    b.HasOne("Module.Core.Entities.Restaurant", "Restaurant")
+                        .WithMany("Administrators")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Module.Core.Entities.User", "User")
+                        .WithMany("RestaurantAdmins")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Module.Core.Entities.RiderZone", b =>
                 {
                     b.HasOne("Module.Core.Entities.Rider", "Rider")
@@ -792,23 +814,6 @@ namespace Module.Infrastructure.Data.Migrations
                     b.Navigation("PaymentMethod");
                 });
 
-            modelBuilder.Entity("Module.Core.Entities.RestaurantAdmin", b =>
-                {
-                    b.HasOne("Module.Core.Entities.User", null)
-                        .WithOne()
-                        .HasForeignKey("Module.Core.Entities.RestaurantAdmin", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Module.Core.Entities.Restaurant", "Restaurant")
-                        .WithMany("Administrators")
-                        .HasForeignKey("RestaurantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Restaurant");
-                });
-
             modelBuilder.Entity("Module.Core.Entities.Rider", b =>
                 {
                     b.HasOne("Module.Core.Entities.User", null)
@@ -834,6 +839,8 @@ namespace Module.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Module.Core.Entities.User", b =>
                 {
+                    b.Navigation("RestaurantAdmins");
+
                     b.Navigation("SessionTickets");
                 });
 

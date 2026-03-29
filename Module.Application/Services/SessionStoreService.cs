@@ -5,6 +5,7 @@ using Module.Shared.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Module.Core.Entities;
 using Microsoft.Extensions.Logging;
+using Module.Application.Interfaces.IRepositories;
 
 namespace Module.Application.Services
 {

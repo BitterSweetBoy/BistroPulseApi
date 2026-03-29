@@ -2,8 +2,8 @@
 using Module.Infrastructure.Data;
 using Module.Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using Module.Application.Interfaces;
 using Microsoft.Extensions.Logging;
+using Module.Application.Interfaces.IRepositories;
 
 namespace Module.Infrastructure.Repositories
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Module.Application.Interfaces;
+using Module.Application.Interfaces.IRepositories;
 
 namespace Module.Application.Services
 {

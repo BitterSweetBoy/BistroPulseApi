@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Module.Application.Interfaces
+namespace Module.Application.Interfaces.IRepositories
 {
     public interface ISessionStoreRepository
     {

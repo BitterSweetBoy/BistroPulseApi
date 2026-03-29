@@ -46,7 +46,6 @@ namespace Module.Infrastructure.Data
 
             // Schema: Restaurant (Restaurantes y administradores)
             builder.Entity<Restaurant>().ToTable("Restaurants", "Restaurant");
-            builder.Entity<RestaurantAdmin>().ToTable("Admins", "Restaurant");
 
             // Schema: Riders (Repartidores y zonas)
             builder.Entity<Rider>().ToTable("Riders", "Riders");
@@ -94,10 +93,28 @@ namespace Module.Infrastructure.Data
                .HasForeignKey(r => r.ZoneId);
 
             // RestaurantAdmin - Restaurant (Uno a muchos)
-            builder.Entity<RestaurantAdmin>()
-               .HasOne(ra => ra.Restaurant)
-               .WithMany(r => r.Administrators)
-               .HasForeignKey(ra => ra.RestaurantId);
+            builder.Entity<RestaurantAdmin>(entity =>
+            {
+                entity.ToTable("Admins", "Restaurant");
+
+                // Usamos clave compuesta RestaurantId + UserId
+                entity.HasKey(ra => new { ra.RestaurantId, ra.UserId });
+
+                entity.Property(ra => ra.DNI)
+                      .IsRequired();
+
+                // FK a Restaurant
+                entity.HasOne(ra => ra.Restaurant)
+                      .WithMany(r => r.Administrators)
+                      .HasForeignKey(ra => ra.RestaurantId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                // FK a User (Auth.Usuarios.Id)
+                entity.HasOne(ra => ra.User)
+                      .WithMany(u => u.RestaurantAdmins) 
+                      .HasForeignKey(ra => ra.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
 
             // PaymentTransaction - Customer (Uno a muchos)
             builder.Entity<PaymentTransaction>()

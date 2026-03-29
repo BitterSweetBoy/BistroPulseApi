@@ -6,9 +6,9 @@ using Module.Application.Interfaces;
 using Module.Infrastructure.Filters;
 using Module.Shared.Response;
 
-namespace BistroPulseApi.Controllers
+namespace BistroPulseApi.Controllers.v1
 {
-    [Route("auth")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -57,7 +57,7 @@ namespace BistroPulseApi.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
             var success = await _authService.LoginAsync(model);
-            
+
             if (!success)
             {
                 return Unauthorized(new ApiResponse<object>(
@@ -66,7 +66,7 @@ namespace BistroPulseApi.Controllers
                     Data: null
                 ));
             }
-            
+
             return Ok(new ApiResponse<object>(
                 Success: true,
                 Message: "Inicio de sesión exitoso",
@@ -100,7 +100,7 @@ namespace BistroPulseApi.Controllers
         public async Task<IActionResult> Logout()
         {
             var result = await _authService.LogoutAsync();
-            if(!result)
+            if (!result)
             {
                 return BadRequest(new ApiResponse<string>(
                     Success: false,

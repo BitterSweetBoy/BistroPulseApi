@@ -5,10 +5,26 @@ using Module.Infrastructure.Repositories;
 using Module.Shared.Interfaces;
 using Module.Shared.Middleware;
 using Module.Shared.Logs;
-using AspNetCore.Serilog.RequestLoggingMiddleware;
 using Serilog;
+using Asp.Versioning.Conventions;
+using Module.Application.Interfaces.IRepositories;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1, 0);
+    options.ReportApiVersions = true;
+}).AddMvc(options =>
+{
+    options.Conventions.Add(new VersionByNamespaceConvention());
+}).AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'V";
+    options.SubstituteApiVersionInUrl = true;
+});
 
 //builder.WebHost.ConfigureKestrel(options =>
 //{
@@ -18,16 +34,26 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("BistroPulseDB");
 builder.Services.AddCustomIdentity(connectionString);
+
+
+
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ISessionStoreRepository, SessionStoreRepository>();
 builder.Services.AddScoped<ISessionStore, SessionStoreService>();
-builder.Services.AddScoped<ISessionValidator, SessionStoreService>();
 builder.Services.AddHostedService<SessionExpirationService>();
+builder.Services.AddScoped<IRestaurantService, RestaurantService>();
+
+builder.Services.AddScoped<ISessionStoreRepository, SessionStoreRepository>();
+builder.Services.AddScoped<ISessionValidator, SessionStoreService>();
+builder.Services.AddScoped<IRestaurantRepository, RestaurantRepository>();
+
 
 builder.Services.AddCustomLogging(builder.Configuration);
 builder.Services.AddSingleton<Serilog.ILogger>(Log.Logger);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(opt =>
+{
+    opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

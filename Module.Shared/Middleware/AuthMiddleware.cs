@@ -4,16 +4,17 @@ using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Module.Shared.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace Module.Shared.Middleware
 {
     public class AuthMiddleware
     {
         private readonly RequestDelegate _next;
-        private static readonly HashSet<string> _excludedRoutes = new()
+        private static readonly HashSet<string> _excludedRoutePatterns = new()
         {
-            "/auth/register",
-            "/auth/login"
+            "^/api/v\\d+/auth/register$", // Coincide con /api/v1/auth/register, /api/v2/auth/register, etc.
+            "^/api/v\\d+/auth/login$"    // Coincide con /api/v1/auth/login, /api/v2/auth/login, etc.
         };
         public AuthMiddleware(RequestDelegate next)
         {
@@ -23,7 +24,7 @@ namespace Module.Shared.Middleware
         public async Task Invoke(HttpContext context)
         {
             // Excluir ciertas rutas de la validación de sesión
-            if (_excludedRoutes.Contains(context.Request.Path.Value))
+            if (_excludedRoutePatterns.Any(pattern => Regex.IsMatch(context.Request.Path.Value, pattern, RegexOptions.IgnoreCase)))
             {
                 await _next(context);
                 return;
